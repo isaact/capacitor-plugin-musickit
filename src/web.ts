@@ -43,6 +43,7 @@ import type {
   GetCurrentPlaybackDurationResult,
   SetSongOptions,
   SetSongResult,
+  GetLibraryPlaylistOptions,
 } from "./definitions";
 
 export class CapacitorMusicKitWeb
@@ -327,6 +328,24 @@ export class CapacitorMusicKitWeb
 
     const response = await MusicKit.getInstance().api.music(
       urls.reverse()[0],
+      params,
+    );
+    return response.data;
+  }
+  
+  async getLibraryPlaylist ({
+    id,
+    include,
+  }: GetLibraryPlaylistOptions): Promise<GetLibraryPlaylistsResult> {
+    const url: MusicKit.AppleMusicAPI.LibraryPlaylistsUrl = `/v1/me/library/playlists/${id}` as const;
+
+    const params: MusicKit.AppleMusicAPI.Params = {}
+    if (include) {
+      params['include'] = include
+    }
+
+    const response = await MusicKit.getInstance().api.music(
+      url,
       params,
     );
     return response.data;

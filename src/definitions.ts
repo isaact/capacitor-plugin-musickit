@@ -83,6 +83,11 @@ export type GetLibraryPlaylistsOptions = {
   catalogId?: string;
 } & GetMultiDataOptions;
 
+export type GetLibraryPlaylistOptions = {
+  id: string;
+  include?: string[]
+};
+
 export type GetLibraryPlaylistsResult =
   MusicKit.Relationship<MusicKit.LibraryPlaylists>;
 
@@ -242,6 +247,9 @@ export interface CapacitorMusicKitPlugin {
   ): Promise<GetLibraryArtistsResult>;
   getLibraryPlaylists(
     options: GetLibraryPlaylistsOptions
+  ): Promise<GetLibraryPlaylistsResult>;
+  getLibraryPlaylist(
+    options: GetLibraryPlaylistOptions
   ): Promise<GetLibraryPlaylistsResult>;
   getLibrarySongs(
     options: GetLibrarySongsOptions

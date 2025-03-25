@@ -5,6 +5,10 @@ import MusicKit
 
 typealias NotifyListeners = ((String, [String: Any]?) -> Void)
 
+enum CapacitorMusicKitError: Error {
+    case missingParameter(name: String)
+}
+
 @available(iOS 16.0, *)
 @objc public class CapacitorMusicKit: NSObject {
     let musicKitPlayer = MusicKitPlayer()
@@ -276,6 +280,23 @@ typealias NotifyListeners = ((String, [String: Any]?) -> Void)
 
         if let catalogId = optCatalogId {
             url = "/v1/catalog/\(storefront)/playlists/\(catalogId)/library"
+        }
+
+        return try await Convertor.getDataRequestJSON(url, params: params)
+    }
+
+    @objc func getLibraryPlaylist(_ call: CAPPluginCall) async throws -> [String: Any] {
+        guard let id = call.getString("id") else {
+            throw CapacitorMusicKitError.missingParameter(name: "id")
+        }
+
+        // https://developer.apple.com/documentation/applemusicapi/get-a-library-playlist
+        let url = "/v1/me/library/playlists/\(id)"
+
+        var params: [String: String] = [:]
+
+        if let include = call.getArray("include", String.self) {
+            params["include"] = include.joined(separator: "%2C")
         }
 
         return try await Convertor.getDataRequestJSON(url, params: params)

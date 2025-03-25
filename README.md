@@ -31,6 +31,7 @@ npx cap sync
 * [`getLibraryAlbums(...)`](#getlibraryalbums)
 * [`getLibraryArtists(...)`](#getlibraryartists)
 * [`getLibraryPlaylists(...)`](#getlibraryplaylists)
+* [`getLibraryPlaylist(...)`](#getlibraryplaylist)
 * [`getLibrarySongs(...)`](#getlibrarysongs)
 * [`getQueueSongs()`](#getqueuesongs)
 * [`getRatings(...)`](#getratings)
@@ -296,6 +297,21 @@ getLibraryPlaylists(options: GetLibraryPlaylistsOptions) => Promise<GetLibraryPl
 | Param         | Type                                                                              |
 | ------------- | --------------------------------------------------------------------------------- |
 | **`options`** | <code><a href="#getlibraryplaylistsoptions">GetLibraryPlaylistsOptions</a></code> |
+
+**Returns:** <code>Promise&lt;<a href="#getlibraryplaylistsresult">GetLibraryPlaylistsResult</a>&gt;</code>
+
+--------------------
+
+
+### getLibraryPlaylist(...)
+
+```typescript
+getLibraryPlaylist(options: GetLibraryPlaylistOptions) => Promise<GetLibraryPlaylistsResult>
+```
+
+| Param         | Type                                                                            |
+| ------------- | ------------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#getlibraryplaylistoptions">GetLibraryPlaylistOptions</a></code> |
 
 **Returns:** <code>Promise&lt;<a href="#getlibraryplaylistsresult">GetLibraryPlaylistsResult</a>&gt;</code>
 
@@ -768,6 +784,11 @@ unauthorize() => Promise<void>
 #### GetLibraryPlaylistsOptions
 
 <code>{ catalogId?: string; } & <a href="#getmultidataoptions">GetMultiDataOptions</a></code>
+
+
+#### GetLibraryPlaylistOptions
+
+<code>{ id: string; include?: string[] }</code>
 
 
 #### GetLibrarySongsResult

@@ -30,6 +30,7 @@ declare namespace MusicKit {
     type PlaylistsUrl =
       | `/v1/me/library/playlists/${string}/catalog`
       | `/v1/catalog/${string}/playlists`
+      | `/v1/catalog/${string}/playlists/${string}`
       | `/v1/catalog/${string}/artists/${string}/playlists`;
     //  `/v1/catalog/${string}/playlists/${string}/curator`
     type StationsUrl =
@@ -65,7 +66,8 @@ declare namespace MusicKit {
       | "/v1/me/library/music-videos";
     type LibraryPlaylistsUrl =
       | `/v1/catalog/${string}/playlists/${string}/library`
-      | "/v1/me/library/playlists";
+      | "/v1/me/library/playlists"
+      | `/v1/me/library/playlists/${string}`;
 
     type SearchLibrarySongsUrl = "/v1/me/library/search?types=library-songs";
 
