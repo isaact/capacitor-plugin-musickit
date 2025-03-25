@@ -209,15 +209,15 @@ export interface CapacitorMusicKitPlugin {
   addListener(
     eventName: "playbackStateDidChange",
     listenerFunc: PlaybackStateDidChangeListener
-  ): Promise<PluginListenerHandle> & PluginListenerHandle;
+  ): Promise<PluginListenerHandle>;
   addListener(
     eventName: "nowPlayingItemDidChange",
     listenerFunc: NowPlayingItemDidChangeListener
-  ): Promise<PluginListenerHandle> & PluginListenerHandle;
+  ): Promise<PluginListenerHandle>;
   addListener(
     eventName: "authorizationStatusDidChange",
     listenerFunc: AuthorizationStatusDidChangeListener
-  ): Promise<PluginListenerHandle> & PluginListenerHandle;
+  ): Promise<PluginListenerHandle>;
   addRating(options: AddRatingOptions): Promise<void>;
   api<T>(options: ApiOptions): Promise<ApiResult<T>>;
   authorize(): Promise<void>;
