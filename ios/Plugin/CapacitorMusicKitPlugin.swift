@@ -136,6 +136,12 @@ public class CapacitorMusicKitPlugin: CAPPlugin {
         }
     }
 
+    @objc func getLibraryPlaylists(_ call: CAPPluginCall) {
+        Task {
+            call.resolve(try await musicKit.getLibraryPlaylists(call))
+        }
+    }
+
     @objc func getCurrentSong(_ call: CAPPluginCall) {
         Task {
             call.resolve(["item": await musicKit.currentSong() as Any])
