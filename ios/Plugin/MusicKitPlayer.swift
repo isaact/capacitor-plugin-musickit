@@ -40,8 +40,17 @@ import MusicKit
         return ApplicationMusicPlayer.shared.playbackTime
     }
     
-    @objc func getCurrentPlaybackTime() -> Double {
-        return ApplicationMusicPlayer.shared.duration
+    @objc func getCurrentPlaybackDuration() -> Double {
+        let item = ApplicationMusicPlayer.shared.queue.currentEntry?.item
+
+        switch item {
+        case .song(let song):
+            return song.duration ?? 0
+        case .musicVideo(let musicVideo):
+            return musicVideo.duration ?? 0
+        default:
+            return 0
+        }
     }
 
     @objc func getRepeatMode() -> String {

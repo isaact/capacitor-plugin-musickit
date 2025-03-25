@@ -43,10 +43,10 @@ import MusicKit
     }
     
     @objc func getCurrentPlaybackDuration() -> Double {
-        if let player = previewPlayer {
-            return Double(CMTimeGetSeconds(player.currentItem?.duration))
+        if let duration = previewPlayer?.currentItem?.asset.duration {
+            return Double(CMTimeGetSeconds(duration))
         }
-        return 0.0
+        return 30.0
     }
 
     @objc func getRepeatMode() -> String {
