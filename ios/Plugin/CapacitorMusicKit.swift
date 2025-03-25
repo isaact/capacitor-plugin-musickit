@@ -144,7 +144,7 @@ typealias NotifyListeners = ((String, [String: Any]?) -> Void)
         if status == .authorized {
             result = true
         } else {
-            guard let settingsURL = await URL(string: UIApplication.openSettingsURLString)
+            guard let settingsURL = URL(string: UIApplication.openSettingsURLString)
             else {
                 return result
             }
@@ -155,7 +155,7 @@ typealias NotifyListeners = ((String, [String: Any]?) -> Void)
 
     @objc func unauthorize() async {
         // 設定アプリに遷移するだけなので authorizationStatusDidChange は発火させない
-        guard let settingsURL = await URL(string: UIApplication.openSettingsURLString) else {
+        guard let settingsURL = URL(string: UIApplication.openSettingsURLString) else {
             return
         }
         await UIApplication.shared.open(settingsURL, options: [:], completionHandler: nil)
