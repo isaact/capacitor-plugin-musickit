@@ -13,9 +13,9 @@ npx cap sync
 
 <docgen-index>
 
-* [`addListener('playbackStateDidChange', ...)`](#addlistenerplaybackstatedidchange)
-* [`addListener('nowPlayingItemDidChange', ...)`](#addlistenernowplayingitemdidchange)
-* [`addListener('authorizationStatusDidChange', ...)`](#addlistenerauthorizationstatusdidchange)
+* [`addListener('playbackStateDidChange', ...)`](#addlistenerplaybackstatedidchange-)
+* [`addListener('nowPlayingItemDidChange', ...)`](#addlistenernowplayingitemdidchange-)
+* [`addListener('authorizationStatusDidChange', ...)`](#addlistenerauthorizationstatusdidchange-)
 * [`addRating(...)`](#addrating)
 * [`api(...)`](#api)
 * [`authorize()`](#authorize)
@@ -60,7 +60,7 @@ npx cap sync
 ### addListener('playbackStateDidChange', ...)
 
 ```typescript
-addListener(eventName: "playbackStateDidChange", listenerFunc: PlaybackStateDidChangeListener) => Promise<PluginListenerHandle> & PluginListenerHandle
+addListener(eventName: "playbackStateDidChange", listenerFunc: PlaybackStateDidChangeListener) => Promise<PluginListenerHandle>
 ```
 
 | Param              | Type                                                                                      |
@@ -68,7 +68,7 @@ addListener(eventName: "playbackStateDidChange", listenerFunc: PlaybackStateDidC
 | **`eventName`**    | <code>'playbackStateDidChange'</code>                                                     |
 | **`listenerFunc`** | <code><a href="#playbackstatedidchangelistener">PlaybackStateDidChangeListener</a></code> |
 
-**Returns:** <code>Promise&lt;<a href="#pluginlistenerhandle">PluginListenerHandle</a>&gt; & <a href="#pluginlistenerhandle">PluginListenerHandle</a></code>
+**Returns:** <code>Promise&lt;<a href="#pluginlistenerhandle">PluginListenerHandle</a>&gt;</code>
 
 --------------------
 
@@ -76,7 +76,7 @@ addListener(eventName: "playbackStateDidChange", listenerFunc: PlaybackStateDidC
 ### addListener('nowPlayingItemDidChange', ...)
 
 ```typescript
-addListener(eventName: "nowPlayingItemDidChange", listenerFunc: NowPlayingItemDidChangeListener) => Promise<PluginListenerHandle> & PluginListenerHandle
+addListener(eventName: "nowPlayingItemDidChange", listenerFunc: NowPlayingItemDidChangeListener) => Promise<PluginListenerHandle>
 ```
 
 | Param              | Type                                                                                        |
@@ -84,7 +84,7 @@ addListener(eventName: "nowPlayingItemDidChange", listenerFunc: NowPlayingItemDi
 | **`eventName`**    | <code>'nowPlayingItemDidChange'</code>                                                      |
 | **`listenerFunc`** | <code><a href="#nowplayingitemdidchangelistener">NowPlayingItemDidChangeListener</a></code> |
 
-**Returns:** <code>Promise&lt;<a href="#pluginlistenerhandle">PluginListenerHandle</a>&gt; & <a href="#pluginlistenerhandle">PluginListenerHandle</a></code>
+**Returns:** <code>Promise&lt;<a href="#pluginlistenerhandle">PluginListenerHandle</a>&gt;</code>
 
 --------------------
 
@@ -92,7 +92,7 @@ addListener(eventName: "nowPlayingItemDidChange", listenerFunc: NowPlayingItemDi
 ### addListener('authorizationStatusDidChange', ...)
 
 ```typescript
-addListener(eventName: "authorizationStatusDidChange", listenerFunc: AuthorizationStatusDidChangeListener) => Promise<PluginListenerHandle> & PluginListenerHandle
+addListener(eventName: "authorizationStatusDidChange", listenerFunc: AuthorizationStatusDidChangeListener) => Promise<PluginListenerHandle>
 ```
 
 | Param              | Type                                                                                                  |
@@ -100,7 +100,7 @@ addListener(eventName: "authorizationStatusDidChange", listenerFunc: Authorizati
 | **`eventName`**    | <code>'authorizationStatusDidChange'</code>                                                           |
 | **`listenerFunc`** | <code><a href="#authorizationstatusdidchangelistener">AuthorizationStatusDidChangeListener</a></code> |
 
-**Returns:** <code>Promise&lt;<a href="#pluginlistenerhandle">PluginListenerHandle</a>&gt; & <a href="#pluginlistenerhandle">PluginListenerHandle</a></code>
+**Returns:** <code>Promise&lt;<a href="#pluginlistenerhandle">PluginListenerHandle</a>&gt;</code>
 
 --------------------
 
