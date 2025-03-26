@@ -245,11 +245,11 @@ export interface CapacitorMusicKitPlugin {
   getLibraryArtists(
     options: GetLibraryArtistsOptions
   ): Promise<GetLibraryArtistsResult>;
-  getLibraryPlaylists(
-    options: GetLibraryPlaylistsOptions
-  ): Promise<GetLibraryPlaylistsResult>;
   getLibraryPlaylist(
     options: GetLibraryPlaylistOptions
+  ): Promise<GetLibraryPlaylistsResult>;
+  getLibraryPlaylists(
+    options: GetLibraryPlaylistsOptions
   ): Promise<GetLibraryPlaylistsResult>;
   getLibrarySongs(
     options: GetLibrarySongsOptions

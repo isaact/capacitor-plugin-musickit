@@ -30,8 +30,8 @@ npx cap sync
 * [`getCurrentSong()`](#getcurrentsong)
 * [`getLibraryAlbums(...)`](#getlibraryalbums)
 * [`getLibraryArtists(...)`](#getlibraryartists)
-* [`getLibraryPlaylists(...)`](#getlibraryplaylists)
 * [`getLibraryPlaylist(...)`](#getlibraryplaylist)
+* [`getLibraryPlaylists(...)`](#getlibraryplaylists)
 * [`getLibrarySongs(...)`](#getlibrarysongs)
 * [`getQueueSongs()`](#getqueuesongs)
 * [`getRatings(...)`](#getratings)
@@ -288,21 +288,6 @@ getLibraryArtists(options: GetLibraryArtistsOptions) => Promise<GetLibraryArtist
 --------------------
 
 
-### getLibraryPlaylists(...)
-
-```typescript
-getLibraryPlaylists(options: GetLibraryPlaylistsOptions) => Promise<GetLibraryPlaylistsResult>
-```
-
-| Param         | Type                                                                              |
-| ------------- | --------------------------------------------------------------------------------- |
-| **`options`** | <code><a href="#getlibraryplaylistsoptions">GetLibraryPlaylistsOptions</a></code> |
-
-**Returns:** <code>Promise&lt;<a href="#getlibraryplaylistsresult">GetLibraryPlaylistsResult</a>&gt;</code>
-
---------------------
-
-
 ### getLibraryPlaylist(...)
 
 ```typescript
@@ -312,6 +297,21 @@ getLibraryPlaylist(options: GetLibraryPlaylistOptions) => Promise<GetLibraryPlay
 | Param         | Type                                                                            |
 | ------------- | ------------------------------------------------------------------------------- |
 | **`options`** | <code><a href="#getlibraryplaylistoptions">GetLibraryPlaylistOptions</a></code> |
+
+**Returns:** <code>Promise&lt;<a href="#getlibraryplaylistsresult">GetLibraryPlaylistsResult</a>&gt;</code>
+
+--------------------
+
+
+### getLibraryPlaylists(...)
+
+```typescript
+getLibraryPlaylists(options: GetLibraryPlaylistsOptions) => Promise<GetLibraryPlaylistsResult>
+```
+
+| Param         | Type                                                                              |
+| ------------- | --------------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#getlibraryplaylistsoptions">GetLibraryPlaylistsOptions</a></code> |
 
 **Returns:** <code>Promise&lt;<a href="#getlibraryplaylistsresult">GetLibraryPlaylistsResult</a>&gt;</code>
 
@@ -781,14 +781,14 @@ unauthorize() => Promise<void>
 <code>MusicKit.Relationship&lt;MusicKit.LibraryPlaylists&gt;</code>
 
 
-#### GetLibraryPlaylistsOptions
-
-<code>{ catalogId?: string; } & <a href="#getmultidataoptions">GetMultiDataOptions</a></code>
-
-
 #### GetLibraryPlaylistOptions
 
 <code>{ id: string; include?: string[] }</code>
+
+
+#### GetLibraryPlaylistsOptions
+
+<code>{ catalogId?: string; } & <a href="#getmultidataoptions">GetMultiDataOptions</a></code>
 
 
 #### GetLibrarySongsResult
