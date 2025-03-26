@@ -386,6 +386,18 @@ enum CapacitorMusicKitError: Error {
         musicKitPlayer.setRepeatMode(call)
     }
 
+    @objc func getShuffleMode() -> String {
+        if isPreview {
+            return previewPlayer.getShuffleMode()
+        } else {
+            return musicKitPlayer.getShuffleMode()
+        }
+    }
+
+    @objc func setShuffleMode(_ call: CAPPluginCall) {
+        musicKitPlayer.setShuffleMode(call)
+    }
+
     @objc func setQueue(_ call: CAPPluginCall) async throws {
         let ids: [String] = call.getArray("ids", String.self) ?? []
         isPreview = false

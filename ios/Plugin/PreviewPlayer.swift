@@ -59,6 +59,15 @@ import MusicKit
         return mode
     }
 
+    @objc func getShuffleMode() -> String {
+        if ApplicationMusicPlayer.shared.state.shuffleMode == .off {
+            return "off"
+        } else if ApplicationMusicPlayer.shared.state.shuffleMode == .songs {
+            return "songs"
+        }
+        return "off"
+    }
+
     public override func observeValue(
         forKeyPath keyPath: String?,
         of object: Any?,

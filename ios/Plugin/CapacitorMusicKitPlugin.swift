@@ -182,11 +182,11 @@ public class CapacitorMusicKitPlugin: CAPPlugin {
     }
 
     @objc func getShuffleMode(_ call: CAPPluginCall) {
-        call.resolve(["mode": musicKit.getRepeatMode()])
+        call.resolve(["mode": musicKit.getShuffleMode()])
     }
 
     @objc func setShuffleMode(_ call: CAPPluginCall) {
-        musicKit.setRepeatMode(call)
+        musicKit.setShuffleMode(call)
         call.resolve()
     }
 
