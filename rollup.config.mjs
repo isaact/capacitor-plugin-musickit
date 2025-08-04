@@ -1,5 +1,5 @@
 export default {
-  external: ["@capacitor/core"],
+  external: ["@capacitor/core", "howler"],
   input: "dist/index.js",
   output: [
     {
@@ -7,6 +7,7 @@ export default {
       format: "iife",
       globals: {
         "@capacitor/core": "capacitorExports",
+        howler: "Howler",
       },
       inlineDynamicImports: true,
       name: "capacitorCapacitorMusicKit",
