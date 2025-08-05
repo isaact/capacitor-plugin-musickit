@@ -137,8 +137,10 @@ api<T>(options: ApiOptions) => Promise<ApiResult<T>>
 ### authorize()
 
 ```typescript
-authorize() => Promise<void>
+authorize() => Promise<ActionResult>
 ```
+
+**Returns:** <code>Promise&lt;<a href="#actionresult">ActionResult</a>&gt;</code>
 
 --------------------
 
@@ -522,8 +524,10 @@ stop() => Promise<void>
 ### unauthorize()
 
 ```typescript
-unauthorize() => Promise<void>
+unauthorize() => Promise<ActionResult>
 ```
+
+**Returns:** <code>Promise&lt;<a href="#actionresult">ActionResult</a>&gt;</code>
 
 --------------------
 
@@ -536,6 +540,13 @@ unauthorize() => Promise<void>
 | Prop         | Type                                      |
 | ------------ | ----------------------------------------- |
 | **`remove`** | <code>() =&gt; Promise&lt;void&gt;</code> |
+
+
+#### ActionResult
+
+| Prop         | Type                 |
+| ------------ | -------------------- |
+| **`result`** | <code>boolean</code> |
 
 
 #### ConfigureOptions
@@ -608,13 +619,6 @@ unauthorize() => Promise<void>
 | Prop       | Type                                                |
 | ---------- | --------------------------------------------------- |
 | **`mode`** | <code><a href="#shufflemode">ShuffleMode</a></code> |
-
-
-#### ActionResult
-
-| Prop         | Type                 |
-| ------------ | -------------------- |
-| **`result`** | <code>boolean</code> |
 
 
 #### PlayOptions

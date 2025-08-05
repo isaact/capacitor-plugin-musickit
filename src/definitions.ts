@@ -225,7 +225,7 @@ export interface CapacitorMusicKitPlugin {
   ): Promise<PluginListenerHandle>;
   addRating(options: AddRatingOptions): Promise<void>;
   api<T>(options: ApiOptions): Promise<ApiResult<T>>;
-  authorize(): Promise<void>;
+  authorize(): Promise<ActionResult>;
   configure(options: ConfigureOptions): Promise<void>;
   deleteRating(options: DeleteRatingOptions): Promise<void>;
   echo(options: EchoOptions): Promise<EchoResult>;
@@ -270,5 +270,5 @@ export interface CapacitorMusicKitPlugin {
   setShuffleMode(options: SetShuffleModeOptions): Promise<void>;
   setSong(options: SetSongOptions): Promise<SetSongResult>;
   stop(): Promise<void>;
-  unauthorize(): Promise<void>;
+  unauthorize(): Promise<ActionResult>;
 }

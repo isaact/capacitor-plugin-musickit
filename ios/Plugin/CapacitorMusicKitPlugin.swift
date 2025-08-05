@@ -96,8 +96,7 @@ public class CapacitorMusicKitPlugin: CAPPlugin {
 
     @objc func authorize(_ call: CAPPluginCall) {
         Task {
-            await musicKit.authorize()
-            call.resolve()
+            call.resolve(["result": await musicKit.authorize()])
         }
     }
 

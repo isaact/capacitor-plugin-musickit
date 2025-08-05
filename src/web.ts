@@ -128,12 +128,14 @@ export class CapacitorMusicKitWeb
     return { result: await MusicKit.getInstance().hasMusicSubscription() };
   }
 
-  async authorize (): Promise<void> {
+  async authorize (): Promise<ActionResult> {
     await MusicKit.getInstance().authorize();
+    return { result: true };
   }
 
-  async unauthorize (): Promise<void> {
+  async unauthorize (): Promise<ActionResult> {
     await MusicKit.getInstance().unauthorize();
+    return { result: true };
   }
 
   async api<T extends any> ({
@@ -341,7 +343,7 @@ export class CapacitorMusicKitWeb
 
     const params: MusicKit.AppleMusicAPI.Params = {}
     if (include) {
-      params['include'] = include
+      params.include = include
     }
 
     const response = await MusicKit.getInstance().api.music(
