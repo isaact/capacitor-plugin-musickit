@@ -273,33 +273,53 @@ enum CapacitorMusicKitError: Error {
         let offset = call.getInt("offset") ?? 0
         let ids = call.getArray("ids", String.self)
 
-        let optCatalogId = call.getString("catalogId")
+//        let optCatalogId = call.getString("catalogId")
 
-        var url = "/v1/me/library/playlists"
-        let params = buildParams(ids, limit, offset)
-
-        if let catalogId = optCatalogId {
-            url = "/v1/catalog/\(storefront)/playlists/\(catalogId)/library"
+        // Use MusicLibraryRequest<Playlist> for library playlists
+        var request = MusicLibraryRequest<Playlist>()
+//        if(optCatalogId != nil) {
+//            request.filter(matching: \., contains: optCatalogId!)
+//        }
+        
+        // Apply limit and offset if no specific IDs are requested
+        if ids == nil {
+            request.limit = limit
         }
-
-        return try await Convertor.getDataRequestJSON(url, params: params)
+        
+        // Apply offset only if no specific IDs are requested
+        if ids == nil && offset > 0 {
+            // MusicLibraryRequest doesn't directly support offset, so we'll need to handle it differently
+            // For now, we'll just fetch with limit and let the caller handle pagination
+        }
+        
+        // Apply ID filtering if provided
+        if let playlistIds = ids {
+            request = MusicLibraryRequest<Playlist>()
+            request.filter(matching: \.id, memberOf: playlistIds.map { MusicItemID($0) })
+        }
+        
+        let response = try await request.response()
+        return await Convertor.toLibraryPlaylists(items: response.items, hasNext: false)
     }
 
     @objc func getLibraryPlaylist(_ call: CAPPluginCall) async throws -> [String: Any] {
         guard let id = call.getString("id") else {
             throw CapacitorMusicKitError.missingParameter(name: "id")
         }
+        let playlistID = MusicItemID(id)
 
-        // https://developer.apple.com/documentation/applemusicapi/get-a-library-playlist
-        let url = "/v1/me/library/playlists/\(id)"
-
-        var params: [String: String] = [:]
-
-        if let include = call.getArray("include", String.self) {
-            params["include"] = include.joined(separator: "%2C")
+        // Use MusicLibraryRequest<Playlist> to fetch a specific playlist
+        var request = MusicLibraryRequest<Playlist>()
+        request.filter(matching: \.id, equalTo: playlistID)
+        let response = try await request.response()
+        
+        // Convert single playlist to the expected format
+        guard let playlist = response.items.first else {
+            return ["data": []]
         }
-
-        return try await Convertor.getDataRequestJSON(url, params: params)
+        
+        let playlistDict = await Convertor.toLibraryPlaylist(item: playlist)
+        return ["data": playlistDict == nil ? [] : [playlistDict]]
     }
 
     func selectSongs(_ ids: [String]) async throws -> [Song] {

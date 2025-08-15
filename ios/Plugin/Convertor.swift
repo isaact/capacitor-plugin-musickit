@@ -233,6 +233,48 @@ class Convertor {
         ]
     }
 
+    static func toLibraryPlaylists(
+        items: MusicItemCollection<Playlist>,
+        hasNext: Bool,
+        size: Int? = sSize
+    ) async -> [String: Any] {
+        var data: [[String: Any]?] = []
+        for item in items {
+            data.append(await toLibraryPlaylist(item: item, size: size))
+        }
+        return [
+            "data": data.compactMap { $0 },
+            "next": hasNext ? "hasNext" : nil,
+        ]
+    }
+
+    static func toLibraryPlaylist(
+        item optItem: Playlist?,
+        size optSize: Int? = nil
+    ) async -> [String: Any]? {
+        guard let item = optItem else {
+            return nil
+        }
+
+        var artworkUrl: String? = nil
+        if let size = optSize {
+            artworkUrl = await toBase64Image(item.artwork, size)
+        }
+
+        return [
+            "id": item.id.rawValue,
+            "type": "library-playlists",
+            "attributes": [
+                "artwork": ["url": artworkUrl],
+                "name": item.name,
+                "description": item.description,
+                "playParams": toPlayParameters(item.playParameters),
+                "dateAdded": formatISOString(item.libraryAddedDate),
+//                "trackCount": item.trackCount,
+            ],
+        ]
+    }
+
     static func toBase64Image(_ artwork: MPMediaItemArtwork?, _ size: Int) -> String? {
         if let artworkItem = artwork {
             do {
