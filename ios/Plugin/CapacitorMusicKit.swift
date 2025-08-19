@@ -249,23 +249,77 @@ enum CapacitorMusicKitError: Error {
         let limit = call.getInt("limit") ?? 1
         let offset = call.getInt("offset") ?? 0
         let ids = call.getArray("ids", String.self)
-
-        let optCatalogId = call.getString("catalogId")
+        
         let optAlbumId = call.getString("albumId")
         let optPlaylistId = call.getString("playlistId")
-
-        var url = "/v1/me/library/songs"
-        let params = buildParams(ids, limit, offset)
-
-        if let catalogId = optCatalogId {
-            url = "/v1/catalog/\(storefront)/songs/\(catalogId)/library"
-        } else if let albumId = optAlbumId {
-            url = "/v1/me/library/albums/\(albumId)/tracks"
-        } else if let playlistId = optPlaylistId {
-            url = "/v1/me/library/playlists/\(playlistId)/tracks"
+        
+        // Handle album tracks request
+        if let albumId = optAlbumId {
+            var albumRequest = MusicLibraryRequest<Song>()
+            albumRequest.filter(matching: \.id, equalTo: MusicItemID(albumId))
+            let albumResponse = try await albumRequest.response()
+            
+            guard let album = albumResponse.items.first else {
+                return ["data": []]
+            }
+            
+            // Get tracks from the album
+            let tracksResponse = try await album.tracks
+            
+            // Apply limit and offset if needed
+            let allTracks = tracksResponse.items
+            let startIndex = min(offset, allTracks.count)
+            let endIndex = min(startIndex + limit, allTracks.count)
+            let limitedTracks = Array(allTracks[startIndex..<endIndex])
+            
+            return await Convertor.toLibrarySongs(items: limitedTracks, hasNext: endIndex < allTracks.count)
         }
-
-        return try await Convertor.getDataRequestJSON(url, params: params)
+        
+        // Handle playlist tracks request
+        if let playlistId = optPlaylistId {
+            var playlistRequest = MusicLibraryRequest<Song>()
+            playlistRequest.filter(matching: \.id, equalTo: MusicItemID(playlistId))
+            let playlistResponse = try await playlistRequest.response()
+            
+            guard let playlist = playlistResponse.items.first else {
+                return ["data": []]
+            }
+            
+            // Get tracks from the playlist
+            let tracksResponse = try await playlist.tracks
+            
+            // Apply limit and offset if needed
+            let allTracks = tracksResponse.items
+            let startIndex = min(offset, allTracks.count)
+            let endIndex = min(startIndex + limit, allTracks.count)
+            let limitedTracks = Array(allTracks[startIndex..<endIndex])
+            
+            return await Convertor.toLibrarySongs(items: limitedTracks, hasNext: endIndex < allTracks.count)
+        }
+        
+        // Handle general library songs request
+        var request = MusicLibraryRequest<Song>()
+        
+        // Apply limit only if no specific IDs are requested
+        if ids == nil {
+            request.limit = limit
+        }
+        
+        // Apply ID filtering if provided
+        if let songIds = ids {
+            request = MusicLibraryRequest<Song>()
+            request.filter(matching: \.id, memberOf: songIds.map { MusicItemID($0) })
+        }
+        
+        let response = try await request.response()
+        
+        // Apply offset manually since MusicLibraryRequest doesn't directly support it
+        let allItems = response.items
+        let startIndex = ids == nil ? min(offset, allItems.count) : 0
+        let limitedItems = ids == nil ? Array(allItems[startIndex..<min(startIndex + limit, allItems.count)]) : allItems
+        let hasNext = ids == nil ? startIndex + limit < allItems.count : false
+        
+        return await Convertor.toLibrarySongs(items: limitedItems, hasNext: hasNext)
     }
     
     @objc func getLibraryPlaylists(_ call: CAPPluginCall) async throws -> [String: Any] {
