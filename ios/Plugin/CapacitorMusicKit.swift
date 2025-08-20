@@ -249,57 +249,12 @@ enum CapacitorMusicKitError: Error {
         let limit = call.getInt("limit") ?? 1
         let offset = call.getInt("offset") ?? 0
         let ids = call.getArray("ids", String.self)
-        
-        let optAlbumId = call.getString("albumId")
-        let optPlaylistId = call.getString("playlistId")
-        
-        // Handle album tracks request
-        if let albumId = optAlbumId {
-            var albumRequest = MusicLibraryRequest<Song>()
-            albumRequest.filter(matching: \.id, equalTo: MusicItemID(albumId))
-            let albumResponse = try await albumRequest.response()
-            
-            guard let album = albumResponse.items.first else {
-                return ["data": []]
-            }
-            
-            // Get tracks from the album
-            let tracksResponse = try await album.tracks
-            
-            // Apply limit and offset if needed
-            let allTracks = tracksResponse.items
-            let startIndex = min(offset, allTracks.count)
-            let endIndex = min(startIndex + limit, allTracks.count)
-            let limitedTracks = Array(allTracks[startIndex..<endIndex])
-            
-            return await Convertor.toLibrarySongs(items: limitedTracks, hasNext: endIndex < allTracks.count)
-        }
-        
-        // Handle playlist tracks request
-        if let playlistId = optPlaylistId {
-            var playlistRequest = MusicLibraryRequest<Song>()
-            playlistRequest.filter(matching: \.id, equalTo: MusicItemID(playlistId))
-            let playlistResponse = try await playlistRequest.response()
-            
-            guard let playlist = playlistResponse.items.first else {
-                return ["data": []]
-            }
-            
-            // Get tracks from the playlist
-            let tracksResponse = try await playlist.tracks
-            
-            // Apply limit and offset if needed
-            let allTracks = tracksResponse.items
-            let startIndex = min(offset, allTracks.count)
-            let endIndex = min(startIndex + limit, allTracks.count)
-            let limitedTracks = Array(allTracks[startIndex..<endIndex])
-            
-            return await Convertor.toLibrarySongs(items: limitedTracks, hasNext: endIndex < allTracks.count)
-        }
-        
+                        
         // Handle general library songs request
         var request = MusicLibraryRequest<Song>()
-        
+        request.limit = limit
+        request.offset = offset
+
         // Apply limit only if no specific IDs are requested
         if ids == nil {
             request.limit = limit
@@ -316,10 +271,9 @@ enum CapacitorMusicKitError: Error {
         // Apply offset manually since MusicLibraryRequest doesn't directly support it
         let allItems = response.items
         let startIndex = ids == nil ? min(offset, allItems.count) : 0
-        let limitedItems = ids == nil ? Array(allItems[startIndex..<min(startIndex + limit, allItems.count)]) : allItems
-        let hasNext = ids == nil ? startIndex + limit < allItems.count : false
-        
-        return await Convertor.toLibrarySongs(items: limitedItems, hasNext: hasNext)
+        let hasNext = limit == allItems.count ? true : false
+
+        return await Convertor.toLibrarySongs(items: response.items, hasNext: hasNext)
     }
     
     @objc func getLibraryPlaylists(_ call: CAPPluginCall) async throws -> [String: Any] {
@@ -357,6 +311,8 @@ enum CapacitorMusicKitError: Error {
     }
 
     @objc func getLibraryPlaylist(_ call: CAPPluginCall) async throws -> [String: Any] {
+//        let limit = call.getInt("limit") ?? 1
+//        let offset = call.getInt("offset") ?? 0
         guard let id = call.getString("id") else {
             throw CapacitorMusicKitError.missingParameter(name: "id")
         }
@@ -371,8 +327,12 @@ enum CapacitorMusicKitError: Error {
         guard let playlist = response.items.first else {
             return ["data": []]
         }
+
+        // Expand playlist with its tracks
+        let expanded = try await playlist.with(.tracks)
+//        var songs = expanded.tracks
         
-        let playlistDict = await Convertor.toLibraryPlaylist(item: playlist)
+        let playlistDict = await Convertor.toLibraryPlaylist(item: expanded)
         return ["data": playlistDict == nil ? [] : [playlistDict]]
     }
 

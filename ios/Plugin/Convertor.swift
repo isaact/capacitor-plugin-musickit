@@ -4,7 +4,7 @@ import MusicKit
 @available(iOS 16.0, *)
 class Convertor {
     static let baseUrl = "https://api.music.apple.com"
-    static let sSize = 200
+    static let sSize = 300
     static let mSize = 400
     static let lSize = 600
 
@@ -205,33 +205,112 @@ class Convertor {
         item optItem: Song?,
         size optSize: Int? = nil
     ) async -> [String: Any]? {
-        guard let item = optItem else {
+        guard let song = optItem else {
             return nil
         }
-
-        var artworkUrl: String? = nil
-        if let size = optSize {
-            artworkUrl = await toBase64Image(item.artwork, size)
-        }
-
-        return [
-            "id": item.id.rawValue,
-            "type": "library-songs",
-            "attributes": [
-                "albumName": item.albumTitle,
-                "artistName": item.artistName,
-                "artwork": ["url": artworkUrl],
-                "discNumber": item.discNumber,
-                "durationInMillis": Double(item.duration ?? 0) * 1000,
-                "genreNames": item.genreNames,
-                "hasLyrics": item.hasLyrics,
-                "name": item.title,
-                "playParams": toPlayParameters(item.playParameters),
-                "releaseDate": formatISOString(item.releaseDate),
-                "trackNumber": item.trackNumber,
-            ],
-        ]
+        return await toLibraryItem(item: song, size: optSize)
     }
+    static func toLibraryItem(
+            item: Song,
+            size: Int? = nil
+        ) async -> [String: Any]? {
+            await buildDictionary(
+                id: item.id.rawValue,
+                type: "library-songs",
+                artwork: item.artwork,
+                size: size,
+                albumTitle: item.albumTitle,
+                artistName: item.artistName,
+                duration: item.duration,
+                title: item.title,
+                playParams: item.playParameters,
+                trackNumber: item.trackNumber,
+                extras: [
+                    "discNumber": item.discNumber,
+                    "genreNames": item.genreNames,
+                    "hasLyrics": item.hasLyrics,
+                    "releaseDate": formatISOString(item.releaseDate)
+                ]
+            )
+        }
+        
+        static func toLibraryItem(
+            item: MusicVideo,
+            size: Int? = nil
+        ) async -> [String: Any]? {
+            await buildDictionary(
+                id: item.id.rawValue,
+                type: "library-music-videos",
+                artwork: item.artwork,
+                size: size,
+                albumTitle: item.albumTitle,
+                artistName: item.artistName,
+                duration: item.duration,
+                title: item.title,
+                playParams: item.playParameters,
+                trackNumber: item.trackNumber,
+                extras: [
+                    "genreNames": item.genreNames,
+                    "releaseDate": formatISOString(item.releaseDate)
+                ]
+            )
+        }
+        
+        static func toLibraryItem(
+            item: Track,
+            size: Int? = nil
+        ) async -> [String: Any]? {
+            switch item {
+            case .song(let song):
+                return await toLibraryItem(item: song, size: size)
+            case .musicVideo(let mv):
+                return await toLibraryItem(item: mv, size: size)
+            @unknown default:
+                return nil
+            }
+        }
+        
+        // MARK: - Shared helper
+        
+        private static func buildDictionary(
+            id: String,
+            type: String,
+            artwork: Artwork?,
+            size: Int?,
+            albumTitle: String?,
+            artistName: String,
+            duration: TimeInterval?,
+            title: String,
+            playParams: PlayParameters?,
+            trackNumber: Int?,
+            extras: [String: Any?]
+        ) async -> [String: Any]? {
+            
+            var artworkUrl: String? = nil
+            if let size = size {
+                artworkUrl = await toBase64Image(artwork, size)
+            }
+            
+            var attributes: [String: Any?] = [
+                "albumName": albumTitle,
+                "artistName": artistName,
+                "artwork": ["url": artworkUrl],
+                "durationInMillis": Double(duration ?? 0) * 1000,
+                "name": title,
+                "playParams": toPlayParameters(playParams),
+                "trackNumber": trackNumber,
+            ]
+            
+            for (k, v) in extras {
+                attributes[k] = v
+            }
+            
+            return [
+                "id": id,
+                "type": type,
+                "attributes": attributes.compactMapValues { $0 }
+            ]
+        }
 
     static func toLibraryPlaylists(
         items: MusicItemCollection<Playlist>,
@@ -261,6 +340,24 @@ class Convertor {
             artworkUrl = await toBase64Image(item.artwork, size)
         }
 
+        // Convert tracks in parallel
+        let tracksArray: [[String: Any]] = await withTaskGroup(of: [String: Any]?.self) { group in
+            // Safely unwrap tracks, fallback to empty
+            for track in item.tracks ?? [] {
+                group.addTask {
+                    await toLibraryItem(item: track, size: optSize)
+                }
+            }
+
+            var results: [[String: Any]] = []
+            for await result in group {
+                if let dict = result {
+                    results.append(dict)
+                }
+            }
+            return results
+        }
+
         return [
             "id": item.id.rawValue,
             "type": "library-playlists",
@@ -270,7 +367,7 @@ class Convertor {
                 "description": item.description,
                 "playParams": toPlayParameters(item.playParameters),
                 "dateAdded": formatISOString(item.libraryAddedDate),
-//                "trackCount": item.trackCount,
+                "tracks": tracksArray
             ],
         ]
     }
